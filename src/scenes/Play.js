@@ -59,11 +59,6 @@ class Play extends Phaser.Scene {
         this.gameOver = false;
         scoreConfig.fixedWidth = 0;
         this.sec = 60;
-        this.clock = this.time.delayedCall(60000, () => {
-        this.add.text(game.config.width/2, game.config.height/2, 'GAME OVER', scoreConfig).setOrigin(0.5);
-        this.add.text(game.config.width/2, game.config.height/2 + 64, 'Press (R) to Restart or ← for Menu', scoreConfig).setOrigin(0.5);
-        this.gameOver = true;
-        }, null, this);
         // display clock
         let clockConfig = {
             fontFamily: 'Courier',
@@ -80,6 +75,11 @@ class Play extends Phaser.Scene {
         this.timeLeft = this.add.text(12*borderUISize + 9*borderPadding, borderUISize + borderPadding*2, this.sec, clockConfig);   
         
         function timer() {
+            if (this.sec <= 0) {
+                this.add.text(game.config.width/2, game.config.height/2, 'GAME OVER', scoreConfig).setOrigin(0.5);
+                this.add.text(game.config.width/2, game.config.height/2 + 64, 'Press (R) to Restart or ← for Menu', scoreConfig).setOrigin(0.5);
+                this.gameOver = true;
+            }
             if (this.sec>0){
                 this.sec -=1;
             }
