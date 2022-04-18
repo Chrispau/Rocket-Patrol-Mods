@@ -6,6 +6,7 @@ class Play extends Phaser.Scene {
         // load images/tile sprites
         this.load.image('rocket', './assets/rocket.PNG');
         this.load.image('spaceship', './assets/spaceship.png');
+        this.load.image('ufo', './assets/ufo.PNG');
         this.load.image('starfield', './assets/starfield.PNG');
         // load spritesheet
         this.load.spritesheet('explosion', './assets/explosion.png', {frameWidth: 64, frameHeight: 32, startFrame: 0, endFrame: 9});
@@ -15,8 +16,8 @@ class Play extends Phaser.Scene {
         // place tile sprite
         this.starfield = this.add.tileSprite(0, 0, 640, 480, 'starfield').setOrigin(0, 0);
     // green UI background
-        this.add.rectangle(0, borderUISize + borderPadding, game.config.width, borderUISize * 2, 0x00FF00).setOrigin(0, 0);
-// black borders
+        //this.add.rectangle(0, borderUISize + borderPadding, game.config.width, borderUISize , 0x00FF00).setOrigin(0, 0);
+// white borders
         this.add.rectangle(0, 0, game.config.width, borderUISize, 0xFFAAFF).setOrigin(0, 0);
         this.add.rectangle(0, game.config.height - borderUISize, game.config.width, borderUISize, 0x000000).setOrigin(0, 0);
         this.add.rectangle(0, 0, borderUISize, game.config.height, 0x000000).setOrigin(0, 0);
@@ -28,10 +29,11 @@ class Play extends Phaser.Scene {
         keyR = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
         keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
         keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
-          // add spaceships (x3)
-        this.ship01 = new Spaceship(this, game.config.width + borderUISize*6, borderUISize*4, 'spaceship', 0, 30).setOrigin(0, 0);
-        this.ship02 = new Spaceship(this, game.config.width + borderUISize*3, borderUISize*5 + borderPadding*2, 'spaceship', 0, 20).setOrigin(0,0);
-        this.ship03 = new Spaceship(this, game.config.width, borderUISize*6 + borderPadding*4, 'spaceship', 0, 10).setOrigin(0,0);   
+          // add spaceships (x4)
+        this.ship01 = new Spaceship(this, game.config.width + borderUISize*6, borderUISize*3, 'spaceship', 0, 30).setOrigin(0, 0);
+        this.ship02 = new Spaceship(this, game.config.width + borderUISize*3, borderUISize*4 + borderPadding*2, 'spaceship', 0, 20).setOrigin(0,0);
+        this.ship03 = new Spaceship(this, game.config.width, borderUISize*5 + borderPadding*4, 'spaceship', 0, 10).setOrigin(0,0);   
+        this.ship04 = new Spaceship(this, game.config.width/2, borderUISize + borderPadding, 'ufo', 0, 50).setOrigin(0,0); 
         // animation config
         this.anims.create({
             key: 'explode',
@@ -54,7 +56,6 @@ class Play extends Phaser.Scene {
             fixedWidth: 100
         }
         this.scoreLeft = this.add.text(borderUISize + borderPadding, borderUISize + borderPadding*2, this.p1Score, scoreConfig);
-        // 60-second play clock
         // GAME OVER flag
         this.gameOver = false;
         scoreConfig.fixedWidth = 0;
@@ -62,7 +63,7 @@ class Play extends Phaser.Scene {
         // display clock
         let clockConfig = {
             fontFamily: 'Courier',
-            fontSize: '28px',
+            fontSize: '22px',
             backgroundColor: '#F3B141',
             color: '#843605',
             align: 'right',
@@ -72,7 +73,7 @@ class Play extends Phaser.Scene {
             },
             fixedWidth: 100
         }
-        this.timeLeft = this.add.text(12*borderUISize + 9*borderPadding, borderUISize + borderPadding*2, this.sec, clockConfig);   
+        this.timeLeft = this.add.text(12*borderUISize + 9*borderPadding, borderUISize + borderPadding*2, "Time:" + this.sec, clockConfig);   
         
         function timer() {
             if (this.sec <= 0) {
@@ -83,13 +84,16 @@ class Play extends Phaser.Scene {
             if (this.sec>0){
                 this.sec -=1;
             }
-            this.timeLeft.text = this.sec;
+            this.timeLeft.text = 'Time:' + this.sec;
         }
         var run = setInterval(timer.bind(this),1000);
+        this.k = this.time.delayedCall(4000, () => {
+            this.spaceshipSpeed = 8;
+            console.log("a");
+          }, null, this);
+        
     }
 
-    
-    
     update() {
             
         // check key input for restart
@@ -105,8 +109,13 @@ class Play extends Phaser.Scene {
             this.ship01.update();      // update spaceships (x3)
             this.ship02.update();
             this.ship03.update();
+            this.ship04.update();
         }
         // check collisions
+        if(this.checkCollision(this.p1Rocket, this.ship04)) {
+            this.p1Rocket.reset();
+            this.shipExplode(this.ship04);
+        }
         if(this.checkCollision(this.p1Rocket, this.ship03)) {
             this.p1Rocket.reset();
             this.shipExplode(this.ship03);
@@ -148,7 +157,7 @@ class Play extends Phaser.Scene {
         this.p1Score += ship.points;
         this.scoreLeft.text = this.p1Score;
         this.sec+=1;
-        this.timeLeft.text = this.sec;
+        this.timeLeft.text = 'Time:' + this.sec;
         this.sound.play('sfx_explosion');       
     }
 }
