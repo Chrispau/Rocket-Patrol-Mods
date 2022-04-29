@@ -31,7 +31,7 @@ class Menu extends Phaser.Scene {
       
       // show menu text
       let bg = this.add.image(240,240,'planets');
-      this.add.text(game.config.width/2, game.config.height/4 - borderUISize - borderPadding, 'ROCKET PATROL', menuConfig).setOrigin(0.5);
+      this.add.text(game.config.width/2, game.config.height/4 - borderUISize - borderPadding, 'NEW ROCKET PATROL', menuConfig).setOrigin(0.5);
       this.add.text(game.config.width/2, game.config.height-40, 'Use ←→ arrows to move & (F) to fire', menuConfig).setOrigin(0.5);
       this.add.text(game.config.width/2, game.config.height/2 + 3*borderUISize + 4*borderPadding, 'Press ← for Novice or → for Expert', menuConfig).setOrigin(0.5);
       this.sound.play('Bach');
