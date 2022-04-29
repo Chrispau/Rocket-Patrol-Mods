@@ -11,7 +11,7 @@ let borderPadding = borderUISize / 3;
 // reserve keyboard vars
 let keyF, keyR, keyLEFT, keyRIGHT;
 
-
+// new comment
 /// New UFO enemy      +20
 /// Added Timer        +10
 /// +1 sec for hit     +20
